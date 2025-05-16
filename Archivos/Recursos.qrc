@@ -1,0 +1,17 @@
+<RCC>
+  <qresource prefix="Logos">
+    <file>log_uat_nuevo.png</file>
+    <file>logo fit.png</file>
+  </qresource>
+  <qresource prefix="Ejercicios">
+    <file>falex 1.jpeg</file>
+    <file>falex 2.jpg</file>
+    <file>falex 3.jpg</file>
+    <file>victor 1.jpg</file>
+    <file>victor 2.jpg</file>
+    <file>victor 3.jpg</file>
+    <file>john cena.png</file>
+    <file>3ueemqhb14k81.png</file>
+    <file>8s85l9yb14k81.png</file>
+  </qresource>
+</RCC>
