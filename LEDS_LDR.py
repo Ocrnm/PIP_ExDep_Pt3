@@ -16,7 +16,6 @@ class MyApp(QtWidgets.QMainWindow, Ui_MainWindow):
         self.horizontalSlider.setSingleStep(1)
         self.horizontalSlider.setValue(0)
         self.horizontalSlider.valueChanged.connect(self.cambiaValor)
-        self.horizontalSlider.valueChanged.connect(self.cambiaValor)
         self.txt_com.setText("COM3")
         self.txt_valor.setText("1023")
         self.arduino = None
@@ -24,32 +23,42 @@ class MyApp(QtWidgets.QMainWindow, Ui_MainWindow):
         self.segundoPlano = QtCore.QTimer()
 
     # Área de los Slots
-
-    # Área de los Slots
     def cambiaValor(self):
-        value = self.horizontalSlider.value()
-        self.txt_valor.setText(str(value))
-        comando = f"{value}\n"
-        self.arduino.write(comando.encode())
+        if self.arduino is not None and self.arduino.is_open:
+            value = self.horizontalSlider.value()
+            self.txt_valor.setText(str(value))
+            comando = f"{value}\n"
+            self.arduino.write(comando.encode())
+        else:
+            self.txt_estado.setText("ERROR: Arduino no conectado")
 
     def accion(self):
         texto = self.btn_accion.text()
         com = self.txt_com.text()
         if texto == "CONECTAR":
-            self.arduino = tarjeta.Serial(com, baudrate=9600, timeout= 1)
-            self.segundoPlano.start(100)
-            self.btn_accion.setText("DESCONECTAR")
-            self.txt_estado.setText("CONECTADO")
+            try:
+                self.arduino = tarjeta.Serial(com, baudrate=9600, timeout=1)
+                self.segundoPlano.start(100)
+                self.btn_accion.setText("DESCONECTAR")
+                self.txt_estado.setText("CONECTADO")
+                self.horizontalSlider.setEnabled(True)
+            except Exception as e:
+                self.txt_estado.setText(f"Error al conectar: {str(e)}")
         elif texto == "DESCONECTAR":
             self.segundoPlano.stop()
             self.arduino.close()
             self.btn_accion.setText("RECONECTAR")
             self.txt_estado.setText("DESCONECTADO")
+            self.horizontalSlider.setEnabled(False)
         elif texto == "RECONECTAR":
-            self.arduino.open()
-            self.segundoPlano.start(100)
-            self.btn_accion.setText("DESCONECTAR")
-            self.txt_estado.setText("RECONECTADO")
+            try:
+                self.arduino.open()
+                self.segundoPlano.start(100)
+                self.btn_accion.setText("DESCONECTAR")
+                self.txt_estado.setText("RECONECTADO")
+                self.horizontalSlider.setEnabled(True)
+            except Exception as e:
+                self.txt_estado.setText(f"Error al reconectar: {str(e)}")
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
